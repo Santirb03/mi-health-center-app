@@ -1,0 +1,117 @@
+// Salux Backend — Prisma Schema
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────
+// Enums
+// ─────────────────────────────
+
+enum UserRole {
+  doctor
+  admin
+}
+
+enum ConsultorioStatus {
+  available
+  unavailable
+}
+
+enum ReservaStatus {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum PagoStatus {
+  pending
+  completed
+  failed
+  refunded
+}
+
+enum MetodoPago {
+  credit_card
+  debit_card
+  transfer
+  cash
+}
+
+// ─────────────────────────────
+// Models
+// ─────────────────────────────
+
+model User {
+  id            String      @id @default(uuid()) @db.Uuid
+  name          String
+  email         String      @unique
+  password      String
+  phone         String?
+  specialty     String?
+  licenseNumber String?
+  role          UserRole    @default(doctor)
+  isActive      Boolean     @default(true)
+  reservas      Reserva[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("users")
+}
+
+model Consultorio {
+  id           String            @id @default(uuid()) @db.Uuid
+  name         String
+  description  String?
+  capacity     Int
+  pricePerHour Decimal           @db.Decimal(10, 2)
+  floor        String?
+  roomNumber   String?
+  amenities    String[]
+  status       ConsultorioStatus @default(available)
+  reservas     Reserva[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@map("rooms")
+}
+
+model Reserva {
+  id             String        @id @default(uuid()) @db.Uuid
+  userId         String        @db.Uuid
+  user           User          @relation(fields: [userId], references: [id])
+  consultorioId  String        @db.Uuid
+  consultorio    Consultorio   @relation(fields: [consultorioId], references: [id])
+  startTime      DateTime
+  endTime        DateTime
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  status         ReservaStatus @default(pending)
+  notes          String?
+  pago           Pago?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("bookings")
+}
+
+model Pago {
+  id            String     @id @default(uuid()) @db.Uuid
+  reservaId     String     @unique @db.Uuid
+  reserva       Reserva    @relation(fields: [reservaId], references: [id])
+  amount        Decimal    @db.Decimal(10, 2)
+  status        PagoStatus @default(pending)
+  method        MetodoPago
+  transactionId String?
+  notes         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@map("payments")
+}
