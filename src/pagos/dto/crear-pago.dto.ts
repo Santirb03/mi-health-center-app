@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { MetodoPago } from '../pago.entity';
+import { MetodoPago } from '@prisma/client';
 
 export class CrearPagoDto {
     @IsNotEmpty()

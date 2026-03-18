@@ -17,7 +17,7 @@ import { SlotQueryDto } from './dto/slot-query.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '../users/user.entity';
+import { UserRole } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('consultorios')
@@ -25,7 +25,7 @@ export class ConsultoriosController {
     constructor(private readonly consultoriosService: ConsultoriosService) { }
 
     /** Solo admin puede crear consultorios */
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.admin)
     @Post()
     create(@Body() crearConsultorioDto: CrearConsultorioDto) {
         return this.consultoriosService.create(crearConsultorioDto);
@@ -70,7 +70,7 @@ export class ConsultoriosController {
     }
 
     /** Solo admin puede modificar y eliminar */
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.admin)
     @Patch(':id')
     update(
         @Param('id', ParseUUIDPipe) id: string,
@@ -79,7 +79,7 @@ export class ConsultoriosController {
         return this.consultoriosService.update(id, updateDto);
     }
 
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.admin)
     @Delete(':id')
     remove(@Param('id', ParseUUIDPipe) id: string) {
         return this.consultoriosService.remove(id);

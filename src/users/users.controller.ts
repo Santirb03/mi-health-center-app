@@ -17,7 +17,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from './user.entity';
+import { UserRole } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
@@ -31,7 +31,7 @@ export class UsersController {
 
     /** Solo admin puede listar todos los usuarios */
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.admin)
     @Get()
     findAll(@Query() pagination: PaginationDto) {
         return this.usersService.findAll(pagination.page, pagination.limit);
@@ -53,7 +53,7 @@ export class UsersController {
 
     /** Solo admin puede eliminar usuarios */
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.admin)
     @Delete(':id')
     remove(@Param('id', ParseUUIDPipe) id: string) {
         return this.usersService.remove(id);

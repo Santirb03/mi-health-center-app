@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, ForbiddenException 
 import { ReservaStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrearReservaDto } from './dto/crear-reserva.dto';
-import { UserRole } from '../users/user.entity';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class ReservasService {
@@ -83,7 +83,7 @@ export class ReservasService {
 
     async cancel(id: string, userId: string, userRole: string) {
         const reserva = await this.findOne(id);
-        if (userRole !== UserRole.ADMIN && reserva.userId !== userId) {
+        if (userRole !== UserRole.admin && reserva.userId !== userId) {
             throw new ForbiddenException('No tienes permiso para cancelar esta reserva');
         }
         if (reserva.status === ReservaStatus.cancelled) {

@@ -7,7 +7,7 @@ import {
     IsEnum,
     IsArray,
 } from 'class-validator';
-import { ConsultorioStatus } from '../consultorio.entity';
+import { ConsultorioStatus } from '@prisma/client';
 
 export class CrearConsultorioDto {
     @IsNotEmpty()

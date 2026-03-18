@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { UserRole } from '../users/user.entity';
+import { UserRole } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Controller('reservas')
@@ -34,7 +34,7 @@ export class ReservasController {
 
     /** Solo admin puede ver todas las reservas */
     @UseGuards(RolesGuard)
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.admin)
     @Get()
     findAll(@Query() pagination: PaginationDto) {
         return this.reservasService.findAll(pagination.page, pagination.limit);
