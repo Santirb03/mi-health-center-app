@@ -17,8 +17,5 @@ export class AuthController {
         return this.authService.login(loginDto);
     }
 
-    @Post('pagos')
-    pagos(@Body() pagosDto: any) {
-        return this.authService.pagos(pagosDto);
-    }
 }
+
